@@ -1,0 +1,202 @@
+<h1><code ng:non-bindable=""></code>
+<div><span class="hint"></span>
+</div>
+</h1>
+<div><div class="overview-page"><h2 id="overview-of-smartedit-e2e-testing">Overview of SmartEdit E2E testing</h2>
+<p>This extension has been generated from smartedittrail, and comes with a sample e2e setup and tests that execute on
+protractor, against a &#39;real&#39; SmartEdit application.</p>
+<p>The following guide will explain all the different pieces of this setup.</p>
+<p>WIP: - lets keep this as our general list of topics until we&#39;re done then we can create the official link</p>
+<pre><code>- Technology (protractor, jasmine)
+- Directory structure
+- Test Bootstrapping
+- Test debugging and manual e2e checking
+- Component and Page Objects
+- Bundle component/page objects
+- Generating storefront (html)
+- Configuring dummy storefront (layout/delay/render strategy)
+- Generating Smartedit (html)
+- Running the e2e grunt task (configuring files?)
+- e2e_dev task
+- CORS
+</code></pre><h2 id="technologies">Technologies</h2>
+<h3 id="technologies_grunt">Grunt</h3>
+<p>Like the rest of the SmartEdit build/test tools, we use Grunt to launch our e2e tests. There are different grunt
+tasks and configurations that can be used. See the <em>Running e2e tests</em> section.</p>
+<h3 id="technologies_selenium+protractor">Selenium+Protractor</h3>
+<p>When you run one of the grunt e2e tasks, SmartEdit is using the grunt-protrator-runner Grunt plugin, configured
+through our builder config. Protractor is an AngularJs test runner that runs on top of Selenium.</p>
+<h3 id="technologies_jasmine">Jasmine</h3>
+<p>You can configure different test frameworks in the protractor configuration, but we use jasmine in the OOTB setup.</p>
+<h3 id="technologies_mocks">Mocks</h3>
+<p>For mocking, we use jasmine spies, and the AngularJs built-in mocks (mock.module, $httpbackend)</p>
+<p><hr></p>
+<h2 id="file/directory-structure">File/Directory Structure</h2>
+<h3 id="file/directory-structure_tests">Tests</h3>
+<pre><code>/jsTests/e2e/&lt;myFeature&gt;/.*Test.js
+</code></pre><h3 id="file/directory-structure_test-config">Test Config</h3>
+<pre><code>/jsTests/e2e/&lt;myFeature&gt;/config.json
+</code></pre><h3 id="file/directory-structure_component-objects">Component Objects</h3>
+<pre><code>/jsTests/e2e/common/componentObjects/.*ComponentObject.js
+</code></pre><h3 id="file/directory-structure_page-objects">Page Objects</h3>
+<pre><code>/jsTests/e2e/common/pageObjects/.*PageObject.js
+</code></pre><p><hr></p>
+<h2 id="generating-the-smartedit-html">Generating the SmartEdit html</h2>
+<p>// TODO ...</p>
+<p><hr></p>
+<h2 id="generating-a-storefront-to-test-against">Generating a Storefront to test against</h2>
+<p>// TODO ...</p>
+<p><hr></p>
+<h2 id="bootstrapping-your-test-js-files">Bootstrapping your test JS files</h2>
+<p>To test your feature in a running SmartEdit application, your feature needs to be added to SmartEdit somehow, or
+even some additional test modules sometimes. To add your extension&#39;s angular modules to SmartEdit, typically you
+would configure it through impex, pointing the <em>smartEditContainerLocation</em> and <em>smartEditLocation</em> at your served
+js files. By default, e2e tests run against a basic SmartEdit application with no extra modules.</p>
+<p>To solve this problem, the test bootstrapper was created. The test bootstrapper allows you to specify, per test
+suite, a SmartEdit configuration to use at runtime. The bootstrapper will load the files and open the SmartEdit page.
+To add the files, first you must list the files you want for either the smartedit or smartedContainer in a
+config.json file in your test feature directory. Then, in your test you call the <em>window.bootstrap</em> function and pass
+the directory of the config.json file. Typically you do this in a beforeEach() and use the node defined __dirname
+for the directory.</p>
+<p>The window.bootstrap function is defined in the onPrepare of the protractor conf and has 2 parameters:</p>
+<ul>
+<li>dir: optional directory location of a config.json test configuration</li>
+<li>done: optional done function that will be executed when the SmartEdit app is loaded.</li>
+</ul>
+<p>If no directory is passed, it will simply load SmartEdit with default configuration.</p>
+<p>Example of loading a smarteditContainer angular module for a test:</p>
+<p><em>jsTests/e2e/x/config.json</em></p>
+<pre><code>{
+  &quot;jsFiles&quot;: [{
+      &quot;value&quot;: &quot;{\&quot;smartEditContainerLocation\&quot;:\&quot;jsTests/e2e/x/someFile.js\&quot;}&quot;,
+      &quot;key&quot;: &quot;applications.xTest&quot;
+  }]
+}
+</code></pre><p><em>jsTests/e2e/x/xTest.js</em></p>
+<pre><code>...
+beforeEach(function() {
+    browser.bootstrap(__dirname);
+
+    // test something from someFile.js
+    ...
+});
+...
+</code></pre><p>The most common use of bootstrapping extra JS files is for tests using customView.</p>
+<h3 id="bootstrapping-your-test-js-files_custom-view">Custom View</h3>
+<p>A <em>custom view</em> test is a test that executes on a special route in SmartEdit only used for testing. This is where
+you might test a feature in the SmartEdit environment, but without a real production implementation of it. So you can
+provide your own html page that will be ran in smarteditContainer, with all the SmartEdit angular modules and DI, but
+you can define your own test html.</p>
+<p>It is always recommended to use the real running app where possible, but some use cases might only be testable in
+a custom setup. An example of this might be where you create an angular component that has a switch (A vs B) but in
+production only A is currently being used. So you might created a custom view with the B scenario as well.</p>
+<p>To create a custom view for a specific test, you need 3 pieces</p>
+<ul>
+<li>A custom view configuration in the bootstrapped config.json file</li>
+<li>A customView.html file to load for the test</li>
+<li>A customViewController.js file with a constant PATH_TO_CUSTOM_VIEW pointing to the html file above.</li>
+</ul>
+<p>Note the angular controller will be exposed to the html as <em>controller</em>.</p>
+<p>Example:</p>
+<p><em>jsTests/e2e/x/config.json</em></p>
+<pre><code class="lang-json">{
+   &quot;jsFiles&quot;: [{
+      &quot;value&quot;: &quot;{\&quot;smartEditContainerLocation\&quot;:\&quot;/jsTests/e2e/x/customViewController.js\&quot;}&quot;,
+      &quot;key&quot;: &quot;applications.customViewModule&quot;
+   }]
+}
+</code></pre>
+<p><em>jsTests/e2e/x/x.html</em></p>
+<pre><code class="lang-html">&lt;h2&gt;Testing some feature x&lt;/h2&gt;
+&lt;x attr=&#39;controller.value&#39; /&gt;
+</code></pre>
+<p><em>jsTests/e2e/x/customViewController.js</em></p>
+<pre><code class="lang-js">angular.module(&#39;customViewModule&#39;, [])
+    .constant(&#39;PATH_TO_CUSTOM_VIEW&#39;, &#39;x/x.html&#39;)
+    .controller(&#39;customViewController&#39;, function() {
+         this.value = &#39;some value for the component x in the view&#39;;
+    });
+angular.module(&#39;smarteditcontainer&#39;).requires.push(&#39;customViewModule&#39;);
+</code></pre>
+<p><em>jsTests/e2e/x/xTests.js</em></p>
+<pre><code class="lang-js">describe(&#39;my test&#39;, function() {
+   beforeEach(function() {
+      browser.bootstrap(__dirname);
+   });
+});
+</code></pre>
+<p><hr></p>
+<h2 id="common-configuration">Common configuration</h2>
+<p>We saw how to setup test-specific configuration in the previous section on bootstrapping tests. There is also a way
+to load a common configuration to be used for all tests. This where you would typically load your extension&#39;s
+served js files. When the e2e-generated SmartEdit is bootstrapping, it looks for the existence of a constant call
+<em>CONFIGURATION_MOCKS</em> in a <em>configurationMocksModule</em>. This is an array of key/value configuration that gets appended
+to the SmartEdit configuration before bootstrapping.</p>
+<p>The easiest way to get this into all tests, is to add it to the generated Smartedit html.
+To do this, add a script that points to your configuration mocks js file in the <em>headerContent</em> section of the
+generateSmarteditIndexHtml task configuration.</p>
+<p>Example:</p>
+<p><em>jsTests/e2e/common/configurationMocks.js</em></p>
+<pre><code class="lang-js">angular
+ .module(&#39;configurationMocksModule&#39;, [])
+ .constant(&#39;CONFIGURATION_MOCKS&#39;, [{
+     value: &quot;{\&quot;smartEditLocation\&quot;:\&quot;/web/webroot/&lt;myext&gt;&gt;/js/myext.js\&quot;}&quot;,
+     key: &quot;applications.myext&quot;
+  }]);
+</code></pre>
+<p><em>smartedit-custom-build/config/generateSmarteditIndexHtml.js</em></p>
+<pre><code class="lang-js">module.exports = function() {
+  return {
+       targets: [ &#39;e2e&#39; ],
+       config: function(data, conf) {
+           conf.e2e = {
+             headerContent: &#39;&lt;script src=&quot;jsTests/e2e/common/configurationMocks.js&quot;&gt;&lt;/script&gt;&#39;
+             ...
+</code></pre>
+<p>This will generate the SmartEdit index html to include your configuraiton mocks module so that when the angular
+application bootstraps, it will see the constant and update the configuration before bootstrapping.</p>
+<p><hr></p>
+<h2 id="test-debugging-and-manual-e2e-checking">Test debugging and manual e2e checking</h2>
+<p>// TODO ...</p>
+<p><hr></p>
+<h2 id="access-to-component/page-objects-in-tests">Access to Component/Page Objects in Tests</h2>
+<p>As part of the onPrepare() function of the protractor-conf, SmartEdit loads all page objects and component objects
+into memory under the <em>e2e</em> namespace. It also strips the tailing &quot;PageObject.js&quot; or &quot;ComponentObject.js&quot; from the
+name.</p>
+<p>Example:</p>
+<p><em>jsTests/e2e/pageObjects/loginPageObject.js</em></p>
+<pre><code class="lang-js">module.exports = {
+  goToLoginPage: () =&gt; {
+     browser.get(&#39;.../login.html&#39;);
+  },
+  // ...
+};
+</code></pre>
+<p><em>jsTests/e2e/tests/loginTest.js</em></p>
+<pre><code class="lang-js">var page = e2e.login;   // &lt;-- Accessing jsTests/e2e/pageObjects/loginPageObject.js
+
+describe(&#39;loginTest&#39;, function() {
+ beforeEach(function() {
+     page.goToLoginPage();
+ });
+ // ...
+});
+</code></pre>
+<p><hr></p>
+<h2 id="running-e2e-tests">Running e2e Tests</h2>
+<p>You can run the e2e tests from command line with</p>
+<pre><code class="lang-sh">grunt e2e
+</code></pre>
+<p>This will run with standard out of the box configuration, and run as a single thread in headless mode.
+The default setup run in a CROSS origin setup by default (by using different ports for the parent frame and the storefront frame).</p>
+<p>To run e2e in the browser (Chrome), run with:</p>
+<pre><code class="lang-sh">grunt e2e_debug
+</code></pre>
+<p>To execute the e2e tests in multi thread, run with:</p>
+<pre><code class="lang-sh">grunt e2e_max
+</code></pre>
+<p>To troubleshoot e2e tests, run with:</p>
+<pre><code class="lang-sh">grunt e2e_dev
+</code></pre>
+<p>This will open a new Chrome window. Navigate to your test file to run your e2e test.</p>
+</div></div>

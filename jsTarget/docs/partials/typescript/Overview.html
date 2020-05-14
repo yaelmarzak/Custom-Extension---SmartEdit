@@ -1,0 +1,51 @@
+<h1><code ng:non-bindable=""></code>
+<div><span class="hint"></span>
+</div>
+</h1>
+<div><div class="overview-page"><h2 id="overview-of-typescript-in-smartedit">Overview of TypeScript in SmartEdit</h2>
+<p>The modifications introduced with the smartedittrail template extension now make it possible for you to use TypeScript in your extension. But this doesn&#39;t mean that you have to switch to coding in TypeScript. You can continue to code in JavaScript. You can also start using TypeScript and keep your existing JavaScript code as is.</p>
+<p>The existing SmartEdit framework is mostly written in JavaScript, now new features are developed in TypeScript. The SmartEdit build system can compile extensions that have both JavaScript and TypeScript in their source files.</p>
+<h3 id="overview-of-typescript-in-smartedit_typescript-documentation">TypeScript documentation</h3>
+<p>For information about TypeScript, see the TypeScript documentation at <a href="https://www.typescriptlang.org">https://www.typescriptlang.org</a></p>
+<h3 id="overview-of-typescript-in-smartedit_typescript-dependencies">TypeScript dependencies</h3>
+<p>All dependencies related to TypeScript support are defined in the /ysmartedimodule/package.json file (owned by the npmancillary extension). For SmartEdit, the following dependencies are particularly important:</p>
+<ul>
+<li>typescript</li>
+<li>tslint: TypeScript linting</li>
+<li>typescript-formatter: Used to format the TypeScript code</li>
+<li>webpack:  The module bundler</li>
+<li>karma-webpack: Webpack plugin for karma, which is used for unit testing.</li>
+<li>@types/xxx: Typing information for third-party libraries </li>
+</ul>
+<h3 id="overview-of-typescript-in-smartedit_typescript-linting">TypeScript Linting:</h3>
+<p>For TypeScript code linting, the SmartEdit build system (Grunt) uses tslint; for more information, see <a href="https://palantir.github.io/tslint/">https://palantir.github.io/tslint/</a>.</p>
+<p>For the linting configuration, you should be aware of the following:</p>
+<ul>
+<li>For IDE development, the tslint.json configuration file is stored at the root of the extension.</li>
+<li>Unless otherwise specified in a custom tslint grunt configuration file, the default &quot;tslint.json&quot; configuration file used when running &quot;grunt tslint&quot; is located in the SmartEdit bundle.</li>
+<li>The grunt tslint Grunt task must be successful in order for the build to be green.</li>
+</ul>
+<h3 id="overview-of-typescript-in-smartedit_project-configuration-using-the-tsconfigjson-file">Project Configuration using the tsconfig.json File</h3>
+<p>Project configuration is done using the tsconfig.json file. For configuration, you should be aware of the following:</p>
+<ul>
+<li>For IDE development, the tsconfig.json configuration file is at the root of the extension.</li>
+<li>The folder smartedit-custom-build/generated contains different tsconfig configuration files. You can override any of the tsconfig files in the smartedit-custom-build/generated folder by defining your own grunt tasks. For more informations on how these files are generated, please refer to the <a href="https://help.hybris.com/">SmartEdit Build documentation.</a></li>
+</ul>
+<p>The important properties in tsconfig.json:</p>
+<ul>
+<li>target:es5 - This means that the ECMAScript target version of the build is set to es5. Essentially, there is no impact on the end user since the target version before the introduction of TypeScript in SmartEdit was es5.</li>
+<li>&quot;typeRoots&quot; - This is the list of folders of type definitions from.</li>
+<li>&quot;experimentalDecorators&quot; - Support for annotations with TypeScript Decorators.</li>
+</ul>
+<h3 id="overview-of-typescript-in-smartedit_typings">Typings</h3>
+<p>The list of SmartEdit module declarations is:</p>
+<ul>
+<li>smartedit</li>
+<li>smarteditcontainer</li>
+<li>smarteditcommons</li>
+</ul>
+<p>The SmartEdit declaration files are located in the SmartEdit build. There is one declaration file for each module. If your IDE is correctly configured to support TypeScript, you will be able to quickly leverage SmartEdit types in your code. Because the SmartEdit framework is not completely converted to TypeScript, you will not be able to view all the framework APIs in the declaration files. The following excerpt shows an example of how to to import an interface from the &quot;smarteditcommons&quot; module:</p>
+<p><em>smartedittrail/web/features/smartedittrailContainer/smartedittrailcontainermodule.ts</em>
+<code>`</code>ts
+import {IFeatureService, SeModule} from &#39;smarteditcommons&#39;;</p>
+</div></div>

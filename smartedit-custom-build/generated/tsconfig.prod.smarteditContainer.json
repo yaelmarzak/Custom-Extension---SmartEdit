@@ -1,0 +1,59 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es5",
+            "scripthost",
+            "es2015",
+            "es2015.iterable"
+        ],
+        "allowJs": false,
+        "checkJs": false,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "strictNullChecks": false,
+        "forceConsistentCasingInFileNames": true,
+        "noEmitOnError": true,
+        "baseUrl": "../../jsTarget/",
+        "typeRoots": [
+            "../../node_modules/@types",
+            "C:\\smartedittrail\\hybris\\bin\\custom\\smartedittrail\\smartedit-build/@types",
+            "!C:\\smartedittrail\\hybris\\bin\\custom\\smartedittrail\\smartedit-build/@types/smartedit"
+        ],
+        "traceResolution": false,
+        "listEmittedFiles": false,
+        "skipLibCheck": true,
+        "pretty": true,
+        "declaration": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false,
+        "paths": {
+            "smarteditcontainer": [
+                "C:\\smartedittrail\\hybris\\bin\\custom\\smartedittrail\\smartedit-build/@types/smarteditcontainer"
+            ],
+            "smarteditcommons": [
+                "C:\\smartedittrail\\hybris\\bin\\custom\\smartedittrail\\smartedit-build\\lib\\smarteditcommons\\src"
+            ],
+            "smartedittrailcontainer/*": [
+                "web/features/smartedittrailContainer/*"
+            ],
+            "smartedittrailcommons": [
+                "web/features/smartedittrailcommons"
+            ],
+            "smartedittrailcommons*": [
+                "web/features/smartedittrailcommons*"
+            ]
+        },
+        "importHelpers": true,
+        "sourceMap": false
+    },
+    "include": [
+        "../../jsTarget/web/features/smartedittrailcommons/**/*",
+        "../../jsTarget/web/features/smartedittrailContainer/**/*"
+    ]
+}
